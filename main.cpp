@@ -5,6 +5,9 @@
 
 int main() {
 
+    //Init random
+    srand(static_cast<unsigned>(time(NULL)));
+
     //Init game object
     Game game;
 

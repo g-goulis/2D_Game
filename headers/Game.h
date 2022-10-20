@@ -7,6 +7,8 @@
 #define INC_2D_GAME_GAME_H
 
 #include <iostream>
+#include <vector>
+#include <ctime>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
@@ -21,7 +23,17 @@ private:
     sf::VideoMode videoMode;
     sf::Event event;
 
+    //Mouse positions
+    sf::Vector2i mousePosWindow;
+
     sf::RectangleShape enemy;
+    std::vector<sf::RectangleShape> enemies;
+
+    //Game Logic
+    float enemySpawnTimer;
+    float enemySpawnTimerMax;
+    int maxEnemies;
+    int points;
 
     //Functions
     void initVars();
@@ -40,6 +52,10 @@ public:
     void update();
     void render();
     void pollEvents();
+    void updateMousePos();
+    void spawnEnemy();
+    void updateEnemies();
+    void renderEnemeies();
 };
 
 

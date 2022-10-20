@@ -19,23 +19,25 @@ Game::~Game(){
 void Game::update(){
     this->pollEvents();
 
-    //Relative to the screen
-    //std::cout << "Mouse Position: " << sf::Mouse::getPosition().x << " " << sf::Mouse::getPosition().y << std::endl;
+    this->updateMousePos();
 
-    //Relative to the window
-    std::cout << "Mouse Position: " << sf::Mouse::getPosition(*this->window).x << " " << sf::Mouse::getPosition(*this->window).y << std::endl;
+    this->updateEnemies();
 }
 
 void Game::render(){
     this->window->clear();
 
-    this->window->draw(this->enemy);
+    this->renderEnemeies();
 
     this->window->display();
 }
 
 void Game::initVars() {
     this->window = nullptr;
+    this->enemySpawnTimer = 0.f;
+    this->enemySpawnTimerMax = 100.f;
+    this->maxEnemies = 5;
+    this->points = 0;
 
 }
 
@@ -44,7 +46,7 @@ void Game::initWindow() {
     this->videoMode.width = 800;
 
     this->window = new sf::RenderWindow(this->videoMode, "My First Game", sf::Style::Titlebar | sf::Style::Close);
-    this->window->setFramerateLimit(144);
+    this->window->setFramerateLimit(60);
 }
 
 const bool Game::getWindowRunning() const {
@@ -74,4 +76,39 @@ void Game::initEnemy() {
     this->enemy.setOutlineColor(sf::Color::White);
     this->enemy.setOutlineThickness(2.f);
 
+}
+
+void Game::updateMousePos() {
+    this->mousePosWindow = sf::Mouse::getPosition(*this->window);
+}
+
+void Game::spawnEnemy() {
+    this->enemy.setPosition(rand()%static_cast<int>(this->window->getSize().x - this->enemy.getSize().x), 0.f);
+
+    this->enemy.setFillColor(sf::Color::Red);
+
+    this->enemies.push_back(this->enemy);
+}
+
+void Game::updateEnemies() {
+
+    if(this->enemySpawnTimer >= this->enemySpawnTimerMax){
+        this->enemySpawnTimer = 0.f;
+        if(this->enemies.size() < this->maxEnemies){
+            this->spawnEnemy();
+        }
+    } else {
+        this->enemySpawnTimer += 1.f;
+    }
+
+    //Move the enemies
+    for(auto &i : this->enemies){
+        i.move(0.f, 5.f);
+    }
+}
+
+void Game::renderEnemeies() {
+    for(auto &i : this->enemies){
+        this->window->draw(i);
+    }
 }
