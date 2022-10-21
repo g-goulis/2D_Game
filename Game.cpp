@@ -29,6 +29,10 @@ void Game::render(){
 
     this->renderEnemeies();
 
+    text.setString("Points: " + std::to_string(this->points));
+
+    this->window->draw(text);
+
     this->window->display();
 }
 
@@ -38,6 +42,9 @@ void Game::initVars() {
     this->enemySpawnTimerMax = 100.f;
     this->maxEnemies = 5;
     this->points = 0;
+    this->font.loadFromFile("C:\\Users\\ninja\\CLionProjects\\2D_Game\\assets\\arial_narrow_7.ttf");
+    this->text.setFont(this->font);
+    this->text.setCharacterSize(50);
 
 }
 
@@ -80,6 +87,7 @@ void Game::initEnemy() {
 
 void Game::updateMousePos() {
     this->mousePosWindow = sf::Mouse::getPosition(*this->window);
+    this->mousePosView = this->window->mapPixelToCoords(this->mousePosWindow);
 }
 
 void Game::spawnEnemy() {
@@ -92,6 +100,7 @@ void Game::spawnEnemy() {
 
 void Game::updateEnemies() {
 
+
     if(this->enemySpawnTimer >= this->enemySpawnTimerMax){
         this->enemySpawnTimer = 0.f;
         if(this->enemies.size() < this->maxEnemies){
@@ -102,8 +111,28 @@ void Game::updateEnemies() {
     }
 
     //Move the enemies
-    for(auto &i : this->enemies){
-        i.move(0.f, 5.f);
+    bool deleted;
+    for(int i = 0; i < this->enemies.size(); i++){
+        deleted = false;
+        this->enemies[i].move(0.f, 1.f);
+
+        //Check if clicked upon?
+        if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
+            if(this->enemies[i].getGlobalBounds().contains(this->mousePosView)){
+                deleted = true;
+                this->points += 10.f;
+            }
+        }
+
+        //If enemy passes bottom of screen
+        if(this->enemies[i].getPosition().y > this->window->getSize().y){
+            deleted = true;
+        }
+
+        if(deleted){
+            this->enemies.erase(this->enemies.begin() + i);
+
+        }
     }
 }
 

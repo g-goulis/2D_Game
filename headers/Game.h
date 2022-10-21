@@ -22,9 +22,12 @@ private:
     sf::RenderWindow* window;
     sf::VideoMode videoMode;
     sf::Event event;
+    sf::Font font;
+    sf::Text text;
 
     //Mouse positions
     sf::Vector2i mousePosWindow;
+    sf::Vector2f mousePosView;
 
     sf::RectangleShape enemy;
     std::vector<sf::RectangleShape> enemies;
